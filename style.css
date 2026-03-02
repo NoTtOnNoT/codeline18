@@ -143,7 +143,9 @@ body {
 
     /* แก้ไขตรงนี้: */
     width: 100%;
-    max-width: 1200px;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
     /* เพิ่มความกว้างสูงสุดเป็น 1200px (ขนาดหน้าจอคอมทั่วไป) */
     margin: 0 auto;
     /* จัดให้อยู่กลางจอ */
@@ -162,7 +164,7 @@ body {
         padding: 2rem 1rem;
         border-radius: 25px;
         /* ลดความโค้งนิดนึงเพื่อให้เข้ากับขอบจอ */
-        width: 96%;
+        width: 93%;
         /* ให้เหลือขอบข้างละ 2% พอ */
     }
 }
@@ -347,3 +349,76 @@ body {
     background: var(--glass-border);
     border-radius: 10px;
 }
+
+/* Card แสดงชื่อน้องรหัส */
+.junior-reveal-card {
+    background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,255,255,0.05));
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.reveal-title {
+    color: #ffd700;
+    font-weight: 600;
+    font-size: 1.5rem;
+    letter-spacing: 1px;
+}
+
+.junior-display-box {
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 20px;
+}
+
+.junior-label {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 5px;
+}
+
+.junior-full-name {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 10px;
+    text-shadow: 0 0 15px rgba(255,255,255,0.3);
+}
+
+.junior-id-badge {
+    display: inline-block;
+    padding: 5px 15px;
+    background: rgba(255,215,0,0.15);
+    color: #ffd700;
+    border-radius: 100px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.pulse-icon-gold {
+    color: #ffd700;
+    animation: pulse-gold 2s infinite;
+}
+
+@keyframes pulse-gold {
+    0% { transform: scale(1); filter: drop-shadow(0 0 0px #ffd700); }
+    50% { transform: scale(1.1); filter: drop-shadow(0 0 10px #ffd700); }
+    100% { transform: scale(1); filter: drop-shadow(0 0 0px #ffd700); }
+}
+
+#junior-contact-box .btn {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    transition: all 0.3s ease;
+}
+
+#junior-contact-box .btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+    color: #fff;
+}
+
+#junior-contact-box .btn-outline-primary:hover { border-color: #0d6efd; }
+#junior-contact-box .btn-outline-danger:hover { border-color: #dc3545; }
