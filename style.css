@@ -1,67 +1,349 @@
+/* --- 1. Base & Variables --- */
 :root {
-    --primary-color: #4361ee;
-    --secondary-color: #f8f9fa;
-    --accent-color: #ff9f1c;
+    --primary: #6366f1;
+    --secondary: #a855f7;
+    --success: #10b981;
+    --warning: #fbbf24;
+    --dark-bg: #0f172a;
+    --glass: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.15);
+    --font-kanit: 'Kanit', sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-kanit);
 }
 
 body {
-    font-family: 'Kanit', sans-serif;
-    margin: 0;
+    background-color: var(--dark-bg);
+    color: #ffffff;
+    min-height: 100vh;
     overflow-x: hidden;
-    background: #eef2f3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-/* เอฟเฟกต์กระจก (Glassmorphism) */
+/* --- 2. Animated Background & Particles --- */
+.background-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+    background:
+        radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.15) 0%, transparent 45%),
+        radial-gradient(circle at 85% 85%, rgba(168, 85, 247, 0.15) 0%, transparent 45%);
+    animation: bgPulse 15s ease-in-out infinite alternate;
+}
+
+@keyframes bgPulse {
+    0% {
+        transform: scale(1);
+    }
+
+    100% {
+        transform: scale(1.1);
+    }
+}
+
+.particles-container {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.particle {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    opacity: 0.2;
+    filter: blur(8px);
+    animation: floatParticle 15s infinite linear;
+}
+
+/* สุ่มขนาดและตำแหน่งละออง */
+.particle:nth-child(1) {
+    width: 40px;
+    height: 40px;
+    left: 10%;
+    animation-duration: 18s;
+}
+
+.particle:nth-child(2) {
+    width: 70px;
+    height: 70px;
+    left: 80%;
+    top: 20%;
+    animation-duration: 25s;
+}
+
+.particle:nth-child(3) {
+    width: 25px;
+    height: 25px;
+    left: 45%;
+    top: 60%;
+    animation-duration: 20s;
+}
+
+.particle:nth-child(4) {
+    width: 90px;
+    height: 90px;
+    left: 70%;
+    top: 85%;
+    animation-duration: 35s;
+}
+
+.particle:nth-child(5) {
+    width: 35px;
+    height: 35px;
+    left: 25%;
+    top: 40%;
+    animation-duration: 22s;
+}
+
+@keyframes floatParticle {
+    0% {
+        transform: translateY(110vh) rotate(0deg);
+        opacity: 0;
+    }
+
+    20% {
+        opacity: 0.3;
+    }
+
+    100% {
+        transform: translateY(-10vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* ปรับตัวคุมด้านนอกสุดให้เต็มจอ */
+.container.main-wrapper {
+    max-width: 100% !important;
+    width: 100%;
+    padding: 10px;
+    /* เว้นระยะจากขอบจอโทรศัพท์นิดเดียวพอ */
+}
+
+/* ปรับตัวการ์ดให้ขยายกว้างขึ้น */
 .glass-card {
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 2rem;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-}
+    background: var(--glass);
+    backdrop-filter: blur(25px) saturate(160%);
+    -webkit-backdrop-filter: blur(25px) saturate(160%);
+    border: 1px solid var(--glass-border);
+    border-radius: 40px;
+    padding: 3rem 2rem;
 
-.icon-circle {
-    width: 70px; height: 70px;
-    background: var(--primary-color);
-    color: white;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
+    /* แก้ไขตรงนี้: */
+    width: 100%;
+    max-width: 1200px;
+    /* เพิ่มความกว้างสูงสุดเป็น 1200px (ขนาดหน้าจอคอมทั่วไป) */
     margin: 0 auto;
+    /* จัดให้อยู่กลางจอ */
+
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
 }
 
+/* ถ้าเป็นมือถือ ให้กว้างเกือบเต็มขอบจอที่สุด */
+@media (max-width: 576px) {
+    .container.main-wrapper {
+        padding: 5px;
+        /* ลดระยะขอบในมือถือลงอีก */
+    }
+
+    .glass-card {
+        padding: 2rem 1rem;
+        border-radius: 25px;
+        /* ลดความโค้งนิดนึงเพื่อให้เข้ากับขอบจอ */
+        width: 96%;
+        /* ให้เหลือขอบข้างละ 2% พอ */
+    }
+}
+
+.glass-card:hover {
+    box-shadow: 0 30px 60px -12px rgba(99, 102, 241, 0.2);
+}
+
+/* --- 4. Login Elements --- */
+.icon-circle {
+    width: 90px;
+    height: 90px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border-radius: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 38px;
+    color: white;
+    box-shadow: 0 15px 35px rgba(99, 102, 241, 0.4);
+    animation: float 5s ease-in-out infinite;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-12px);
+    }
+}
+
+.form-floating>.form-control {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: white !important;
+    border-radius: 20px;
+    height: 65px;
+}
+
+.form-floating>label {
+    color: rgba(255, 255, 255, 0.5);
+    padding-left: 1.25rem;
+}
+
+/* --- 5. Profile & Junior Card --- */
 .profile-img {
-    width: 140px; height: 140px;
-    object-fit: cover;
+    width: 140px;
+    height: 140px;
     border-radius: 50%;
-    border: 5px solid white;
+    border: 4px solid var(--primary);
+    padding: 5px;
+    background: var(--dark-bg);
+    object-fit: cover;
+}
+
+.junior-card {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.2));
+    border: 2px solid var(--success) !important;
+    border-radius: 30px;
+    animation: juniorPulse 2s infinite ease-in-out;
+}
+
+@keyframes juniorPulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+    }
+
+    50% {
+        box-shadow: 0 0 25px rgba(16, 185, 129, 0.4);
+    }
 }
 
 .info-card {
-    background: #f8f9fc;
-    border-radius: 1rem;
-    border: 1px solid #eee;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.form-control {
-    border-radius: 1rem;
-    padding: 12px 20px;
-    border: 1px solid #ddd;
+/* --- 6. Buttons & Interactive --- */
+.btn-primary {
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    border: none;
+    border-radius: 20px;
+    font-weight: 600;
+    height: 60px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.form-control:focus {
-    box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.15);
-    border-color: var(--primary-color);
+.btn-primary:hover {
+    transform: scale(1.03) translateY(-3px);
+    box-shadow: 0 15px 30px rgba(99, 102, 241, 0.4);
 }
 
-.btn-primary { background: var(--primary-color); border: none; border-radius: 1rem; }
-.btn-warning { background: var(--accent-color); border: none; border-radius: 1rem; }
-.btn-success { border-radius: 1rem; }
+.btn-warning {
+    background: var(--warning);
+    color: #000;
+    border-radius: 18px;
+    border: none;
+}
 
+.btn-glass-light {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 18px;
+}
+
+/* --- 7. Animations & Utilities --- */
 .fade-in {
-    animation: fadeIn 0.5s ease-in-out;
+    animation: fadeInUp 0.8s ease-out forwards;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.text-gradient-primary {
+    background: linear-gradient(to right, #818cf8, #c084fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.social-icon {
+    transition: all 0.3s ease;
+}
+
+.social-icon.text-primary {
+    color: #1877f2 !important;
+    opacity: 1 !important;
+    filter: drop-shadow(0 0 8px rgba(24, 119, 242, 0.5));
+}
+
+.social-icon.text-danger {
+    color: #e4405f !important;
+    opacity: 1 !important;
+    filter: drop-shadow(0 0 8px rgba(228, 64, 95, 0.5));
+}
+
+/* --- 8. Responsive Adjustments --- */
+@media (max-width: 576px) {
+    .glass-card {
+        padding: 2.5rem 1.5rem;
+        border-radius: 30px;
+        margin: 15px;
+    }
+
+    h2 {
+        font-size: 1.75rem;
+    }
+
+    .icon-circle {
+        width: 75px;
+        height: 75px;
+        font-size: 30px;
+    }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--dark-bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--glass-border);
+    border-radius: 10px;
 }

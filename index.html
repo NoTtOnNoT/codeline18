@@ -2,7 +2,8 @@
 <html lang="th">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport"
+            content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <title>Student Portal | ระบบนักเรียน (พี่รหัส)</title>
         <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
@@ -17,119 +18,168 @@
     <body>
 
         <div class="background-overlay"></div>
+        <div class="particles-container">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+        </div>
 
         <div
-            class="container d-flex align-items-center justify-content-center min-vh-100">
+            class="container main-wrapper d-flex align-items-center justify-content-center min-vh-100">
 
-            <section id="login-section"
-                class="col-12 col-sm-8 col-md-5 col-lg-4">
-                <div class="glass-card p-4 p-md-5 text-center fade-in">
+            <section id="login-section" class="fade-in">
+                <div class="glass-card text-center">
                     <div class="icon-circle mb-4">
-                        <i class="fas fa-user-grad fa-2x"></i>
+                        <i class="fas fa-user-grad"></i>
                     </div>
-                    <h2 class="fw-bold mb-2">สวัสดีพี่รหัส</h2>
+                    <h2 class="fw-bold mb-2">สายรหัสทับหนึ่ง</h2>
                     <p
-                        class="text-secondary mb-4">กรุณากรอกรหัสนักเรียนเพื่อเข้าสู่ระบบ</p>
-                    <div class="form-floating mb-3">
+                        class="text-white-50 mb-4">กรุณากรอกรหัสนักเรียนเพื่อเข้าสู่ระบบ</p>
+
+                    <div class="form-floating mb-4">
                         <input type="text" id="student-id" class="form-control"
-                            placeholder="รหัสนักเรียน">
-                        <label for="student-id">รหัสนักเรียน</label>
+                            placeholder="รหัสนักเรียน" autocomplete="off">
+                        <label for="student-id"><i
+                                class="fas fa-id-card me-2"></i>รหัสนักเรียน</label>
                     </div>
+
                     <button id="btn-login"
                         class="btn btn-primary w-100 py-3 shadow-lg">
-                        เข้าสู่ระบบ <i class="fas fa-arrow-right ms-2"></i>
+                        <span>เข้าสู่ระบบ</span> <i
+                            class="fas fa-arrow-right ms-2"></i>
                     </button>
                 </div>
             </section>
 
-            <section id="view-section" class="col-12 col-md-6 col-lg-5 d-none">
-                <div class="glass-card p-4 text-center fade-in">
+            <section id="view-section" class="d-none fade-in w-100">
+                <div class="glass-card text-center container-fluid">
                     <div class="profile-wrapper mb-4">
                         <img id="view-photo"
                             src="https://ui-avatars.com/api/?background=random&color=fff&name=Senior"
-                            alt="Profile" class="profile-img shadow">
+                            alt="Profile" class="profile-img">
                     </div>
-                    <h2 id="view-name"
-                        class="fw-bold text-dark mb-1">ชื่อ-นามสกุล</h2>
-                    <span
-                        class="badge rounded-pill bg-light text-dark mb-4 px-3 py-2 border">ID:
-                        <span id="view-id"></span></span>
 
-                    <div class="row g-3 mb-4 text-start">
-                        <div class="col-12">
-                            <div class="info-card p-3 text-center">
-                                <small class="text-muted d-block">ฉายานามสมมุติ
-                                    (น้องรหัสจะเห็นชื่อนี้)</small>
-                                <span id="text-alias"
-                                    class="fw-bold fs-5 text-primary">ยังไม่ได้ตั้งฉายา</span>
-                            </div>
+                    <h2 id="view-name"
+                        class="fw-bold text-white mb-1">ชื่อ-นามสกุล</h2>
+                    <div class="mb-4">
+                        <span
+                            class="badge rounded-pill bg-glass-dark px-3 py-2 border border-white-50">
+                            ID: <span id="view-id"></span>
+                        </span>
+                    </div>
+
+                    <div class="info-card p-3 mb-4">
+                        <small class="text-white-50 d-block mb-1">ชื่อสายรหัส
+                            (น้องรหัสจะเห็นชื่อนี้)</small>
+                        <span id="text-alias"
+                            class="fw-bold fs-4 text-gradient-primary">ยังไม่ได้ตั้งฉายา</span>
+                    </div>
+
+                    <div id="junior-info-container"
+                        class="junior-card p-4 mb-4 d-none">
+                        <div
+                            class="d-flex align-items-center justify-content-center gap-2 mb-3">
+                            <div class="pulse-icon"><i
+                                    class="fas fa-link"></i></div>
+                            <small
+                                class="fw-bold text-success uppercase tracking-widest">น้องรหัสของคุณ</small>
                         </div>
-                        <div class="col-12 text-center">
-                            <div class="info-card p-3">
-                                <small
-                                    class="text-muted d-block mb-2">ช่องทางติดต่อที่คุณลงไว้</small>
-                                <div
-                                    class="d-flex justify-content-center gap-4">
-                                    <span id="view-fb-status"
-                                        class="text-secondary opacity-50"><i
-                                            class="fab fa-facebook fa-2x"></i></span>
-                                    <span id="view-ig-status"
-                                        class="text-secondary opacity-50"><i
-                                            class="fab fa-instagram fa-2x"></i></span>
-                                </div>
-                                <small id="text-contact-status"
-                                    class="text-muted mt-2 d-block">ยังไม่มีข้อมูลการติดต่อ</small>
-                            </div>
+                        <div
+                            class="p-3 bg-white-10 rounded-4 border border-success-50">
+                            <h4 id="junior-name-display"
+                                class="fw-bold text-white m-0">ชื่อน้องรหัส</h4>
+                            <small class="text-white-50">รหัสนักเรียน: <span
+                                    id="junior-id-display">XXXXX</span></small>
                         </div>
+                    </div>
+
+                    <div class="info-card p-3 mb-4">
+                        <small
+                            class="text-white-50 d-block mb-3">ช่องทางติดต่อ</small>
+                        <div class="d-flex justify-content-center gap-5 mb-2">
+                            <span id="view-fb-status"
+                                class="social-icon opacity-50"><i
+                                    class="fab fa-facebook fa-2x"></i></span>
+                            <span id="view-ig-status"
+                                class="social-icon opacity-50"><i
+                                    class="fab fa-instagram fa-2x"></i></span>
+                        </div>
+                        <small id="text-contact-status"
+                            class="text-white-50 mt-2 d-block">ยังไม่มีข้อมูลการติดต่อ</small>
                     </div>
 
                     <div class="d-grid gap-3">
                         <button id="btn-go-to-edit"
                             class="btn btn-warning btn-action py-3 fw-bold">
-                            <i class="fas fa-edit me-2"></i>
-                            แก้ไขข้อมูลฉายา/ช่องทางติดต่อ
+                            <i class="fas fa-edit me-2"></i> แก้ไขข้อมูลสายรหัส
                         </button>
                         <button onclick="location.reload()"
-                            class="btn btn-link text-muted btn-sm">ออกจากระบบ</button>
+                            class="btn btn-link text-white-50 btn-sm text-decoration-none">ออกจากระบบ</button>
                     </div>
                 </div>
             </section>
 
-            <section id="edit-section" class="col-12 col-md-6 col-lg-5 d-none">
-                <div class="glass-card p-4 fade-in">
-                    <h4 class="fw-bold mb-4"><i
-                            class="fas fa-user-edit me-2"></i>อัปเดตข้อมูลสายรหัส</h4>
-
-                    <div class="mb-3">
-                        <label
-                            class="form-label small fw-bold text-primary">ฉายานามสมมุติ
-                            (Alias)</label>
-                        <input type="text" id="input-alias"
-                            class="form-control form-control-lg"
-                            placeholder="เช่น พี่กุ้งเต้นซิ่ง">
-                        <div
-                            class="form-text">ชื่อนี้จะโชว์ให้น้องรหัสเห็นแทนชื่อจริง</div>
-                    </div>
-
-                    <hr class="my-4">
-
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold text-info"><i
-                                class="fab fa-facebook-f me-2"></i>Facebook
-                            Link</label>
-                        <input type="url" id="input-fb" class="form-control"
-                            placeholder="https://www.facebook.com/yourname">
-                    </div>
+            <section id="edit-section" class="d-none fade-in w-100"
+                style="max-width: 500px;">
+                <div class="glass-card">
+                    <h4 class="fw-bold mb-4 text-center">
+                        <i
+                            class="fas fa-user-edit me-2 text-warning"></i>อัปเดตข้อมูล
+                    </h4>
 
                     <div class="mb-4">
-                        <label class="form-label small fw-bold text-danger"><i
-                                class="fab fa-instagram me-2"></i>Instagram
-                            Link</label>
-                        <input type="url" id="input-ig" class="form-control"
-                            placeholder="https://www.instagram.com/yourname">
+                        <label
+                            class="form-label small fw-bold text-info uppercase">ชื่อสายรหัส
+                            (Alias)</label>
+                        <input type="text" id="input-alias"
+                            class="form-control custom-input"
+                            placeholder="เช่น พี่กุ้งเต้นซิ่ง">
+                        <div
+                            class="form-text text-white-50">ชื่อนี้จะใช้แสดงให้น้องรหัสเห็นแทนชื่อจริง</div>
                     </div>
 
-                    <div class="row g-2">
+                    <hr class="border-white-10 my-4">
+
+                    <div class="mb-4">
+                        <label
+                            class="form-label small fw-bold text-white-50 uppercase mb-3">เลือกช่องทางการติดต่อหลัก</label>
+
+                        <div class="d-flex gap-3 mb-3">
+                            <input type="radio" class="btn-check"
+                                name="contact-type" id="type-fb"
+                                value="facebook" checked>
+                            <label
+                                class="btn btn-outline-primary w-100 py-2 rounded-3"
+                                for="type-fb">
+                                <i class="fab fa-facebook-f me-2"></i>Facebook
+                            </label>
+
+                            <input type="radio" class="btn-check"
+                                name="contact-type" id="type-ig"
+                                value="instagram">
+                            <label
+                                class="btn btn-outline-danger w-100 py-2 rounded-3"
+                                for="type-ig">
+                                <i class="fab fa-instagram me-2"></i>Instagram
+                            </label>
+                        </div>
+
+                        <div class="contact-input-wrapper">
+                            <label id="label-contact"
+                                class="form-label small fw-bold text-primary uppercase">Facebook
+                                Link</label>
+                            <input type="url" id="input-contact"
+                                class="form-control custom-input"
+                                placeholder="กรอกลิงก์ที่นี่...">
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mt-2">
                         <div class="col-8">
                             <button id="btn-save"
                                 class="btn btn-success w-100 py-3 fw-bold shadow-sm">
@@ -138,7 +188,7 @@
                         </div>
                         <div class="col-4">
                             <button id="btn-cancel"
-                                class="btn btn-light w-100 py-3 border">ยกเลิก</button>
+                                class="btn btn-glass-light w-100 py-3">ยกเลิก</button>
                         </div>
                     </div>
                 </div>
