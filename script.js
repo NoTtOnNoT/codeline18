@@ -14,13 +14,41 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 let currentStudentId = "";
+let selectedImageBase64 = ""; // ตัวแปรชั่วคราวเก็บรหัสรูปภาพใหม่
 
 // Elements
 const loginSec = document.getElementById('login-section');
 const viewSec = document.getElementById('view-section');
 const editSec = document.getElementById('edit-section');
 
-/* --- 1. ฟังก์ชันค้นหาน้องรหัส --- */
+// Photo Elements (เพิ่มเติม)
+const inputPhoto = document.getElementById('input-photo');
+const editPhotoPreview = document.getElementById('edit-photo-preview');
+const viewPhoto = document.getElementById('view-photo');
+
+/* --- 1. ฟังก์ชันจัดการรูปภาพ (เพิ่มเติม) --- */
+if (inputPhoto) {
+    inputPhoto.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            // ตรวจสอบขนาดไฟล์ (ไม่ควรเกิน 1MB เพื่อไม่ให้ Database หนักเกินไป)
+            if (file.size > 1024 * 1024) {
+                Swal.fire('ไฟล์ใหญ่เกินไป', 'กรุณาเลือกรูปภาพที่มีขนาดไม่เกิน 1MB', 'warning');
+                this.value = "";
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                selectedImageBase64 = event.target.result;
+                if (editPhotoPreview) editPhotoPreview.src = selectedImageBase64;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+}
+
+/* --- 2. ฟังก์ชันค้นหาน้องรหัส --- */
 async function findMyJunior(seniorId) {
     try {
         const juniorsSnapshot = await get(ref(db, 'juniors'));
@@ -44,7 +72,7 @@ async function findMyJunior(seniorId) {
     }
 }
 
-/* --- 2. ฟังก์ชัน Login --- */
+/* --- 3. ฟังก์ชัน Login --- */
 async function login() {
     const id = document.getElementById('student-id').value.trim();
     const password = document.getElementById('student-password').value.trim();
@@ -61,7 +89,6 @@ async function login() {
         if (snapshot.exists()) {
             const data = snapshot.val();
 
-            // ตรวจสอบรหัสผ่าน (ใช้ ID เป็นค่าเริ่มต้นถ้ายังไม่มี password ใน DB)
             const hasSetPassword = data.hasOwnProperty('password');
             const correctPassword = hasSetPassword ? data.password : id;
 
@@ -71,7 +98,12 @@ async function login() {
                 // --- แสดงข้อมูลหน้า View ---
                 document.getElementById('view-name').innerText = data.name;
                 document.getElementById('view-id').innerText = id;
-                document.getElementById('view-photo').src = data.photo || `https://ui-avatars.com/api/?background=random&color=fff&name=${encodeURIComponent(data.name)}`;
+                
+                // โหลดรูปภาพ (ถ้าไม่มีให้ใช้ Avatar แทน)
+                const userPhoto = data.photo || `https://ui-avatars.com/api/?background=random&color=fff&name=${encodeURIComponent(data.name)}`;
+                viewPhoto.src = userPhoto;
+                if (editPhotoPreview) editPhotoPreview.src = userPhoto;
+
                 document.getElementById('text-alias').innerText = data.alias || "ยังไม่ได้ตั้งฉายา";
 
                 // --- ค้นหาน้องรหัสและจัดการ UI ---
@@ -82,10 +114,8 @@ async function login() {
                 if (myJunior) {
                     juniorContainer.classList.remove('d-none');
                     if (noJuniorMsg) noJuniorMsg.classList.add('d-none');
-
                     document.getElementById('junior-name-display').innerText = myJunior.name;
 
-                    // จัดการปุ่มติดต่อสื่อสาร
                     const fbBtn = document.getElementById('junior-fb-link');
                     const igBtn = document.getElementById('junior-ig-link');
                     const noContact = document.getElementById('no-junior-contact');
@@ -110,11 +140,9 @@ async function login() {
                     if (noJuniorMsg) noJuniorMsg.classList.remove('d-none');
                 }
 
-                // เปลี่ยนหน้า
                 loginSec.classList.add('d-none');
                 viewSec.classList.remove('d-none');
 
-                // แจ้งเตือนหากยังไม่ได้เปลี่ยนรหัสผ่าน
                 if (!hasSetPassword) {
                     Swal.fire({
                         title: 'เปลี่ยนรหัสด้วยยย!',
@@ -139,21 +167,24 @@ async function login() {
     }
 }
 
-/* --- 3. ฟังก์ชันบันทึกข้อมูล (Alias + Password ในที่เดียว) --- */
+/* --- 4. ฟังก์ชันบันทึกข้อมูล (Alias + Password + Photo) --- */
 async function saveData() {
     const alias = document.getElementById('input-alias').value.trim();
     const newPassword = document.getElementById('input-new-password').value.trim();
 
     let updateData = {};
 
-    // 1. ตรวจสอบฉายา (บังคับใส่)
     if (!alias) {
         Swal.fire('แจ้งเตือน', 'กรุณาระบุฉายาก่อนบันทึก', 'info');
         return;
     }
     updateData.alias = alias;
 
-    // 2. ตรวจสอบรหัสผ่านใหม่ (ถ้ามีการกรอก)
+    // ตรวจสอบรูปภาพใหม่
+    if (selectedImageBase64 !== "") {
+        updateData.photo = selectedImageBase64;
+    }
+
     if (newPassword !== "") {
         if (newPassword.length < 4) {
             Swal.fire('ผิดพลาด', 'รหัสผ่านใหม่ต้องมีอย่างน้อย 4 ตัวอักษร', 'error');
@@ -162,38 +193,49 @@ async function saveData() {
         updateData.password = newPassword;
     }
 
-    Swal.showLoading();
+    Swal.fire({
+        title: 'กำลังบันทึก...',
+        allowOutsideClick: false,
+        didOpen: () => { Swal.showLoading(); }
+    });
 
     try {
         await update(ref(db, `students/${currentStudentId}`), updateData);
 
-        // อัปเดต UI หน้าหลัก
+        // อัปเดต UI ทันที
         document.getElementById('text-alias').innerText = alias;
-        document.getElementById('input-new-password').value = ""; // ล้างช่องรหัสผ่านหลังบันทึก
+        if (selectedImageBase64 !== "") {
+            viewPhoto.src = selectedImageBase64;
+        }
+        document.getElementById('input-new-password').value = "";
 
         Swal.fire({
             icon: 'success',
             title: 'บันทึกสำเร็จ',
-            text: 'ข้อมูลของคุณถูกอัปเดตเรียบร้อยแล้ว',
+            text: 'อัปเดตข้อมูลเรียบร้อยแล้วจ้าาา!',
             showConfirmButton: false,
             timer: 1500
         });
 
         editSec.classList.add('d-none');
         viewSec.classList.remove('d-none');
+        selectedImageBase64 = ""; // เคลียร์ตัวแปรหลังบันทึก
     } catch (e) {
         console.error(e);
         Swal.fire('บันทึกไม่สำเร็จ', 'เกิดข้อผิดพลาดในการเชื่อมต่อ', 'error');
     }
 }
 
-/* --- 4. Event Listeners --- */
+/* --- 5. Event Listeners --- */
 document.getElementById('btn-login').addEventListener('click', login);
 
 document.getElementById('btn-go-to-edit').addEventListener('click', () => {
     const currentAlias = document.getElementById('text-alias').innerText;
     document.getElementById('input-alias').value = (currentAlias === "ยังไม่ได้ตั้งฉายา") ? "" : currentAlias;
-    document.getElementById('input-new-password').value = ""; // ล้างช่องรหัสผ่านทุกครั้งที่เข้าหน้าแก้
+    document.getElementById('input-new-password').value = "";
+    
+    // ดึงรูปปัจจุบันไปแสดงในหน้า Preview ของหน้า Edit
+    if (editPhotoPreview) editPhotoPreview.src = viewPhoto.src;
 
     viewSec.classList.add('d-none');
     editSec.classList.remove('d-none');
@@ -202,11 +244,11 @@ document.getElementById('btn-go-to-edit').addEventListener('click', () => {
 document.getElementById('btn-cancel').addEventListener('click', () => {
     editSec.classList.add('d-none');
     viewSec.classList.remove('d-none');
+    selectedImageBase64 = ""; // ยกเลิกการเลือกรูป
 });
 
 document.getElementById('btn-save').addEventListener('click', saveData);
 
-// รองรับการกด Enter ในหน้า Login
 const enterAction = (e) => { if (e.key === 'Enter') login(); };
 document.getElementById('student-id').addEventListener('keypress', enterAction);
 document.getElementById('student-password').addEventListener('keypress', enterAction);
