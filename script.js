@@ -48,27 +48,35 @@ if (inputPhoto) {
     });
 }
 
-/* --- 2. ฟังก์ชันค้นหาน้องรหัส --- */
+/* --- แก้ไขฟังก์ชันค้นหาน้องรหัส (รองรับน้องหลายคน) --- */
 async function findMyJunior(seniorId) {
     try {
         const juniorsSnapshot = await get(ref(db, 'juniors'));
+        let foundJuniors = []; // 1. สร้าง Array ว่างเพื่อเก็บรายชื่อน้องทุกคนที่เจอ
+
         if (juniorsSnapshot.exists()) {
             const allJuniors = juniorsSnapshot.val();
+            
             for (let juniorId in allJuniors) {
-                if (allJuniors[juniorId].senior_id === seniorId) {
-                    return {
+                // 2. ตรวจสอบเงื่อนไข senior_id (แปลงเป็น String เพื่อป้องกัน Error กรณีชนิดข้อมูลไม่ตรงกัน)
+                if (String(allJuniors[juniorId].senior_id) === String(seniorId)) {
+                    // 3. ถ้าเจอ ให้เพิ่มข้อมูลน้องลงใน Array แทนการ return ทันที
+                    foundJuniors.push({
                         id: juniorId,
                         name: allJuniors[juniorId].name,
                         facebook: allJuniors[juniorId].facebook,
                         instagram: allJuniors[juniorId].instagram
-                    };
+                    });
                 }
             }
         }
-        return null;
+        
+        // 4. ส่งกลับเป็น Array ของน้องทุกคนที่เจอ (ถ้าไม่เจอใครเลยจะคืนค่าเป็น [])
+        return foundJuniors; 
+
     } catch (e) {
         console.error("Error finding junior:", e);
-        return null;
+        return [];
     }
 }
 
@@ -107,38 +115,60 @@ async function login() {
                 document.getElementById('text-alias').innerText = data.alias || "ยังไม่ได้ตั้งฉายา";
 
                 // --- ค้นหาน้องรหัสและจัดการ UI ---
-                const myJunior = await findMyJunior(id);
-                const juniorContainer = document.getElementById('junior-info-container');
-                const noJuniorMsg = document.getElementById('no-junior-msg');
+const myJuniors = await findMyJunior(id); // รับค่าเป็น Array
+const juniorContainer = document.getElementById('junior-info-container');
+const noJuniorMsg = document.getElementById('no-junior-msg');
 
-                if (myJunior) {
-                    juniorContainer.classList.remove('d-none');
-                    if (noJuniorMsg) noJuniorMsg.classList.add('d-none');
-                    document.getElementById('junior-name-display').innerText = myJunior.name;
+// ล้างข้อมูลเก่าออกก่อนเริ่มเขียนใหม่
+juniorContainer.innerHTML = "";
 
-                    const fbBtn = document.getElementById('junior-fb-link');
-                    const igBtn = document.getElementById('junior-ig-link');
-                    const noContact = document.getElementById('no-junior-contact');
+if (myJuniors && myJuniors.length > 0) {
+    juniorContainer.classList.remove('d-none');
+    if (noJuniorMsg) noJuniorMsg.classList.add('d-none');
 
-                    fbBtn.classList.add('d-none');
-                    igBtn.classList.add('d-none');
-                    if (noContact) noContact.classList.add('d-none');
+    // วนลูปสร้างข้อมูลน้องแต่ละคน โดยใช้โครงสร้างและ Class เดิมของคุณ
+    myJuniors.forEach((junior) => {
+        // จัดการ Link Social
+        const fbUrl = junior.facebook ? (junior.facebook.includes('http') ? junior.facebook : `https://facebook.com/${junior.facebook}`) : null;
+        const igUrl = junior.instagram ? (junior.instagram.includes('http') ? junior.instagram : `https://instagram.com/${junior.instagram}`) : null;
 
-                    if (myJunior.facebook) {
-                        fbBtn.href = myJunior.facebook.includes('http') ? myJunior.facebook : `https://facebook.com/${myJunior.facebook}`;
-                        fbBtn.classList.remove('d-none');
-                    }
-                    if (myJunior.instagram) {
-                        igBtn.href = myJunior.instagram.includes('http') ? myJunior.instagram : `https://instagram.com/${myJunior.instagram}`;
-                        igBtn.classList.remove('d-none');
-                    }
-                    if (!myJunior.facebook && !myJunior.instagram && noContact) {
-                        noContact.classList.remove('d-none');
-                    }
-                } else {
-                    juniorContainer.classList.add('d-none');
-                    if (noJuniorMsg) noJuniorMsg.classList.remove('d-none');
-                }
+        // สร้าง HTML Block สำหรับน้อง 1 คน (Copy สไตล์เดิมมาเป๊ะๆ)
+        const juniorBlock = `
+    <div class="junior-item mb-4 pb-3" style="border-bottom: 1px solid rgba(255,255,255,0.1); text-align: center;">
+        <div class="mb-3">
+            <span class="text-secondary" style="font-size: 0.85rem; display: block; letter-spacing: 0.5px;">น้องรหัสของคุณ:</span>
+            <h4 id="junior-name-display" style="color: #fff; margin: 5px 0; font-weight: 600;">${junior.name}</h4>
+        </div>
+        
+        <div class="d-flex gap-3 mt-2 justify-content-center">
+            <a href="${fbUrl}" target="_blank" 
+               class="btn btn-sm ${!fbUrl ? 'd-none' : ''}" 
+               style="border-radius: 50px; padding: 8px 20px; background: linear-gradient(45deg, #1877F2, #0052cc); color: white; border: none; box-shadow: 0 4px 15px rgba(24, 119, 242, 0.3); transition: 0.3s; font-weight: 500;">
+               <i class="fab fa-facebook-f me-2"></i> Facebook
+            </a>
+            
+            <a href="${igUrl}" target="_blank" 
+               class="btn btn-sm ${!igUrl ? 'd-none' : ''}" 
+               style="border-radius: 50px; padding: 8px 20px; background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: white; border: none; box-shadow: 0 4px 15px rgba(225, 48, 108, 0.3); transition: 0.3s; font-weight: 500;">
+               <i class="fab fa-instagram me-2"></i> Instagram
+            </a>
+        </div>
+
+        <small class="text-muted d-block mt-3 ${ (fbUrl || igUrl) ? 'd-none' : '' }" style="font-style: italic; opacity: 0.7;">
+            <i class="fas fa-exclamation-circle me-1"></i> ยังไม่ได้ลงข้อมูลติดต่อ
+        </small>
+    </div>
+`;
+        
+        // เพิ่มเข้าไปใน Container
+        juniorContainer.innerHTML += juniorBlock;
+    });
+
+} else {
+    // กรณีไม่มีน้องรหัสเลย
+    juniorContainer.classList.add('d-none');
+    if (noJuniorMsg) noJuniorMsg.classList.remove('d-none');
+}
 
                 loginSec.classList.add('d-none');
                 viewSec.classList.remove('d-none');
