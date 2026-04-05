@@ -352,10 +352,10 @@ body {
 
 /* Card แสดงชื่อน้องรหัส */
 .junior-reveal-card {
-    background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,255,255,0.05));
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 255, 255, 0.05));
     border: 1px solid rgba(255, 215, 0, 0.3);
     border-radius: 30px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 .reveal-title {
@@ -373,7 +373,7 @@ body {
 
 .junior-label {
     font-size: 0.8rem;
-    color: rgba(255,255,255,0.5);
+    color: rgba(255, 255, 255, 0.5);
     margin-bottom: 5px;
 }
 
@@ -382,13 +382,13 @@ body {
     font-weight: 700;
     color: #fff;
     margin-bottom: 10px;
-    text-shadow: 0 0 15px rgba(255,255,255,0.3);
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
 }
 
 .junior-id-badge {
     display: inline-block;
     padding: 5px 15px;
-    background: rgba(255,215,0,0.15);
+    background: rgba(255, 215, 0, 0.15);
     color: #ffd700;
     border-radius: 100px;
     font-size: 0.85rem;
@@ -401,9 +401,20 @@ body {
 }
 
 @keyframes pulse-gold {
-    0% { transform: scale(1); filter: drop-shadow(0 0 0px #ffd700); }
-    50% { transform: scale(1.1); filter: drop-shadow(0 0 10px #ffd700); }
-    100% { transform: scale(1); filter: drop-shadow(0 0 0px #ffd700); }
+    0% {
+        transform: scale(1);
+        filter: drop-shadow(0 0 0px #ffd700);
+    }
+
+    50% {
+        transform: scale(1.1);
+        filter: drop-shadow(0 0 10px #ffd700);
+    }
+
+    100% {
+        transform: scale(1);
+        filter: drop-shadow(0 0 0px #ffd700);
+    }
 }
 
 #junior-contact-box .btn {
@@ -420,8 +431,13 @@ body {
     color: #fff;
 }
 
-#junior-contact-box .btn-outline-primary:hover { border-color: #0d6efd; }
-#junior-contact-box .btn-outline-danger:hover { border-color: #dc3545; }
+#junior-contact-box .btn-outline-primary:hover {
+    border-color: #0d6efd;
+}
+
+#junior-contact-box .btn-outline-danger:hover {
+    border-color: #dc3545;
+}
 
 /* ตกแต่งส่วนจัดการรูปภาพในหน้าแก้ไข */
 .edit-profile-wrapper {
@@ -451,11 +467,55 @@ body {
     justify-content: center;
     color: #000;
     cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     transition: all 0.3s ease;
 }
 
 .btn-edit-photo:hover {
     transform: scale(1.1);
     background: #ffc107;
+}
+
+/* ตัว Container ของรูป */
+.icon-circle {
+    width: 200px;
+    /* ปรับขนาดความกว้างตามความเหมาะสม */
+    height: auto;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    /* เอาพื้นหลังออก */
+    border: none;
+    /* เอากรอบออก */
+    box-shadow: none;
+    /* เอาเงาของกรอบออก */
+}
+
+/* ตัวรูปภาพโลโก้ */
+.login-logo {
+    width: 100%;
+    /* ให้ขนาดตาม Container */
+    height: auto;
+    object-fit: contain;
+
+    /* เพิ่มแสงฟุ้ง (Glow) ให้ตัวรูปภาพโดยตรงแทน */
+    filter: drop-shadow(0 0 15px rgba(99, 102, 241, 0.6));
+
+    /* เพิ่มลูกเล่นขยับเบาๆ (Optional) */
+    animation: simpleFloat 3s ease-in-out infinite;
+}
+
+/* Animation ลอยขึ้นลงแบบนุ่มนวล */
+@keyframes simpleFloat {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
 }

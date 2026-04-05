@@ -28,7 +28,7 @@ const viewPhoto = document.getElementById('view-photo');
 
 /* --- 1. ฟังก์ชันจัดการรูปภาพ (เพิ่มเติม) --- */
 if (inputPhoto) {
-    inputPhoto.addEventListener('change', function(e) {
+    inputPhoto.addEventListener('change', function (e) {
         const file = e.target.files[0];
         if (file) {
             // ตรวจสอบขนาดไฟล์ (ไม่ควรเกิน 1MB เพื่อไม่ให้ Database หนักเกินไป)
@@ -39,7 +39,7 @@ if (inputPhoto) {
             }
 
             const reader = new FileReader();
-            reader.onload = function(event) {
+            reader.onload = function (event) {
                 selectedImageBase64 = event.target.result;
                 if (editPhotoPreview) editPhotoPreview.src = selectedImageBase64;
             };
@@ -56,7 +56,7 @@ async function findMyJunior(seniorId) {
 
         if (juniorsSnapshot.exists()) {
             const allJuniors = juniorsSnapshot.val();
-            
+
             for (let juniorId in allJuniors) {
                 // 2. ตรวจสอบเงื่อนไข senior_id (แปลงเป็น String เพื่อป้องกัน Error กรณีชนิดข้อมูลไม่ตรงกัน)
                 if (String(allJuniors[juniorId].senior_id) === String(seniorId)) {
@@ -70,9 +70,9 @@ async function findMyJunior(seniorId) {
                 }
             }
         }
-        
+
         // 4. ส่งกลับเป็น Array ของน้องทุกคนที่เจอ (ถ้าไม่เจอใครเลยจะคืนค่าเป็น [])
-        return foundJuniors; 
+        return foundJuniors;
 
     } catch (e) {
         console.error("Error finding junior:", e);
@@ -103,10 +103,15 @@ async function login() {
             if (password === correctPassword) {
                 currentStudentId = id;
 
+                // --- เพิ่มส่วนนี้: บันทึกข้อมูลลงเครื่องผู้ใช้ ---
+                localStorage.setItem('rememberedId', id);
+                localStorage.setItem('rememberedPass', password);
+                // ------------------------------------------
+
                 // --- แสดงข้อมูลหน้า View ---
                 document.getElementById('view-name').innerText = data.name;
                 document.getElementById('view-id').innerText = id;
-                
+
                 // โหลดรูปภาพ (ถ้าไม่มีให้ใช้ Avatar แทน)
                 const userPhoto = data.photo || `https://ui-avatars.com/api/?background=random&color=fff&name=${encodeURIComponent(data.name)}`;
                 viewPhoto.src = userPhoto;
@@ -115,25 +120,25 @@ async function login() {
                 document.getElementById('text-alias').innerText = data.alias || "ยังไม่ได้ตั้งฉายา";
 
                 // --- ค้นหาน้องรหัสและจัดการ UI ---
-const myJuniors = await findMyJunior(id); // รับค่าเป็น Array
-const juniorContainer = document.getElementById('junior-info-container');
-const noJuniorMsg = document.getElementById('no-junior-msg');
+                const myJuniors = await findMyJunior(id); // รับค่าเป็น Array
+                const juniorContainer = document.getElementById('junior-info-container');
+                const noJuniorMsg = document.getElementById('no-junior-msg');
 
-// ล้างข้อมูลเก่าออกก่อนเริ่มเขียนใหม่
-juniorContainer.innerHTML = "";
+                // ล้างข้อมูลเก่าออกก่อนเริ่มเขียนใหม่
+                juniorContainer.innerHTML = "";
 
-if (myJuniors && myJuniors.length > 0) {
-    juniorContainer.classList.remove('d-none');
-    if (noJuniorMsg) noJuniorMsg.classList.add('d-none');
+                if (myJuniors && myJuniors.length > 0) {
+                    juniorContainer.classList.remove('d-none');
+                    if (noJuniorMsg) noJuniorMsg.classList.add('d-none');
 
-    // วนลูปสร้างข้อมูลน้องแต่ละคน โดยใช้โครงสร้างและ Class เดิมของคุณ
-    myJuniors.forEach((junior) => {
-        // จัดการ Link Social
-        const fbUrl = junior.facebook ? (junior.facebook.includes('http') ? junior.facebook : `https://facebook.com/${junior.facebook}`) : null;
-        const igUrl = junior.instagram ? (junior.instagram.includes('http') ? junior.instagram : `https://instagram.com/${junior.instagram}`) : null;
+                    // วนลูปสร้างข้อมูลน้องแต่ละคน โดยใช้โครงสร้างและ Class เดิมของคุณ
+                    myJuniors.forEach((junior) => {
+                        // จัดการ Link Social
+                        const fbUrl = junior.facebook ? (junior.facebook.includes('http') ? junior.facebook : `https://facebook.com/${junior.facebook}`) : null;
+                        const igUrl = junior.instagram ? (junior.instagram.includes('http') ? junior.instagram : `https://instagram.com/${junior.instagram}`) : null;
 
-        // สร้าง HTML Block สำหรับน้อง 1 คน (Copy สไตล์เดิมมาเป๊ะๆ)
-        const juniorBlock = `
+                        // สร้าง HTML Block สำหรับน้อง 1 คน (Copy สไตล์เดิมมาเป๊ะๆ)
+                        const juniorBlock = `
     <div class="junior-item mb-4 pb-3" style="border-bottom: 1px solid rgba(255,255,255,0.1); text-align: center;">
         <div class="mb-3">
             <span class="text-secondary" style="font-size: 0.85rem; display: block; letter-spacing: 0.5px;">น้องรหัสของคุณ:</span>
@@ -154,21 +159,21 @@ if (myJuniors && myJuniors.length > 0) {
             </a>
         </div>
 
-        <small class="text-muted d-block mt-3 ${ (fbUrl || igUrl) ? 'd-none' : '' }" style="font-style: italic; opacity: 0.7;">
+        <small class="text-muted d-block mt-3 ${(fbUrl || igUrl) ? 'd-none' : ''}" style="font-style: italic; opacity: 0.7;">
             <i class="fas fa-exclamation-circle me-1"></i> ยังไม่ได้ลงข้อมูลติดต่อ
         </small>
     </div>
 `;
-        
-        // เพิ่มเข้าไปใน Container
-        juniorContainer.innerHTML += juniorBlock;
-    });
 
-} else {
-    // กรณีไม่มีน้องรหัสเลย
-    juniorContainer.classList.add('d-none');
-    if (noJuniorMsg) noJuniorMsg.classList.remove('d-none');
-}
+                        // เพิ่มเข้าไปใน Container
+                        juniorContainer.innerHTML += juniorBlock;
+                    });
+
+                } else {
+                    // กรณีไม่มีน้องรหัสเลย
+                    juniorContainer.classList.add('d-none');
+                    if (noJuniorMsg) noJuniorMsg.classList.remove('d-none');
+                }
 
                 loginSec.classList.add('d-none');
                 viewSec.classList.remove('d-none');
@@ -263,7 +268,7 @@ document.getElementById('btn-go-to-edit').addEventListener('click', () => {
     const currentAlias = document.getElementById('text-alias').innerText;
     document.getElementById('input-alias').value = (currentAlias === "ยังไม่ได้ตั้งฉายา") ? "" : currentAlias;
     document.getElementById('input-new-password').value = "";
-    
+
     // ดึงรูปปัจจุบันไปแสดงในหน้า Preview ของหน้า Edit
     if (editPhotoPreview) editPhotoPreview.src = viewPhoto.src;
 
@@ -282,3 +287,28 @@ document.getElementById('btn-save').addEventListener('click', saveData);
 const enterAction = (e) => { if (e.key === 'Enter') login(); };
 document.getElementById('student-id').addEventListener('keypress', enterAction);
 document.getElementById('student-password').addEventListener('keypress', enterAction);
+
+// แก้ไขส่วนท้ายของ script.js
+window.addEventListener('load', () => {
+    const savedId = localStorage.getItem('rememberedId');
+    const savedPass = localStorage.getItem('rememberedPass');
+
+    if (savedId && savedPass) {
+        // เติมค่าลงในช่อง Input
+        document.getElementById('student-id').value = savedId;
+        document.getElementById('student-password').value = savedPass;
+        
+        // สั่งล็อกอินอัตโนมัติทันที
+        login(); 
+    }
+});
+
+// ฟังก์ชันสำหรับ Logout
+function logout() {
+    localStorage.removeItem('rememberedId');
+    localStorage.removeItem('rememberedPass');
+    location.reload(); // รีโหลดหน้าเพื่อกลับไปหน้า Login ว่างๆ
+}
+
+// ผูกฟังก์ชันเข้ากับปุ่ม (หาปุ่มที่มีคำว่า ออกจากระบบ)
+document.querySelector('button[onclick="location.reload()"]').onclick = logout;
