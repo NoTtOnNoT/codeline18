@@ -519,3 +519,30 @@ body {
         transform: translateY(-5px);
     }
 }
+
+/* จัดขนาดรูปภาพในหน้าแก้ไข */
+.profile-img-container {
+    width: 130px;
+    height: 130px;
+    margin: 0 auto;
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* เอฟเฟกต์เมื่อเอาเมาส์มาวางที่รูป */
+.upload-overlay {
+    transition: opacity 0.3s ease;
+}
+
+.profile-img-container:hover .upload-overlay {
+    opacity: 1 !important;
+}
+
+.transition-all {
+    transition: all 0.3s ease;
+}
+
+/* สำหรับควบคุมให้รูปภาพเต็มวงกลมพอดี */
+.object-fit-cover {
+    object-fit: cover;
+}
